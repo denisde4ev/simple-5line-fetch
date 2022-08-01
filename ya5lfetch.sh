@@ -113,7 +113,10 @@ done
 printf '\33[m\n\33[5A'
 
 p=$(printf '\33[3%im%s\33[m@%s \33[3%im%s\33[m'  "$(( ${EUID:-$(id -u)} == 0 ? 1 : 3 ))" "${USER:-$(id -un)}" "${HOSTNAME:-$(hostname)}" "$c" "${PWD:-$(pwd)}") # prompt
-b=;for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do [ -r "$i"/capacity ] && b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status); done # 1 line detect battery level
+b=;for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do # detect battery level
+	[ -r "$i"/capacity ] &&
+		b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status);
+done
 printf "\\33[${w:-11}C%s\\n" \
 	"$p" \
 	"OS:      $os" \
