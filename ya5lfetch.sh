@@ -21,9 +21,11 @@ esac
 
 IFS=$(printf \\33)
 
-c=4 # def. color blue (Arch, BTW)
-
-case ${os%" "[Ll][Ii][Nn][Uu][Xx]} in
+unset w
+c=4 # default color blue (Arch, BTW)
+_os=${os%[Ll][Ii][Nn][Uu][Xx]}
+_os=${_os%" "*}
+case $_os in
 
 [Aa]rch)a=\
 '     .    
@@ -33,7 +35,7 @@ case ${os%" "[Ll][Ii][Nn][Uu][Xx]} in
  /`     `\'
 ;;
 
-[Aa]rco*)a=\
+[Aa]rco)a=\
 '     .    
     / \   
    / . \  
@@ -55,7 +57,7 @@ c=6;;
   /  \'$IFS' /\'$IFS'
  /'$IFS'◁'$IFS'   \'$IFS'  
 ';
-c='4 8 4 8 4 8 4 4 8';l=12;;
+c='4 8 4 8 4 8 4 4 8';w=12;;
 
 [Aa]ndroid)a=\
 '
@@ -63,7 +65,7 @@ c='4 8 4 8 4 8 4 4 8';l=12;;
  ╱ . . ╲ 
 ▕       ▏
  ▔▔▔▔▔▔▔ '
-c=2;l=9;;
+c=2;w=9;;
  
 KISS|[Kk]iss)a=\
 '
@@ -71,15 +73,15 @@ KISS|[Kk]iss)a=\
  | |/ |
  | |\ |
  +----+'
-c=1;l=8;;
+c=1;w=8;;
  
-[Mm]anjaro*)a=\
+[Mm]anjaro)a=\
 '
  █████ ██
  ██ ▄▄ ██
  ██ ██ ██
  ██ ██ ██'
-c=2;l=10;;
+c=2;w=10;;
 
 [Dd]ebian)a=\
 '  ,--. 
@@ -87,7 +89,7 @@ c=2;l=10;;
 |  (__/
  \     
   `-.  '
-c=1;l=9;;
+c=1;w=9;;
 
 # Space Invaders
 *)a=\
@@ -96,7 +98,7 @@ c=1;l=9;;
 █▀███████▀█
 █░█▀▀▀▀▀█░█
 ░░░▀▀░▀▀░░░'
-c=$(( ${RANDOM:-$(\dd if=/dev/random | tr -dc 0-9 | head -c 1)} % 7 + 1 ));l=12;;
+c=$(( ${RANDOM:-$(\dd if=/dev/random | tr -dc 0-9 | head -c 1)} % 7 + 1 ));w=12;;
 
 esac
 
@@ -112,7 +114,7 @@ printf '\33[m\n\33[5A'
 
 p=$(printf '\33[3%im%s\33[m@%s \33[3%im%s\33[m'  "$(( ${EUID:-$(id -u)} == 0 ? 1 : 3 ))" "${USER:-$(id -un)}" "${HOSTNAME:-$(hostname)}" "$c" "${PWD:-$(pwd)}") # prompt
 b=;for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do [ -r "$i"/capacity ] && b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status); done # 1 line detect battery level
-printf "\\33[${l:-11}C%s\\n" \
+printf "\\33[${w:-11}C%s\\n" \
 	"$p" \
 	"OS:      $os" \
 	"KERNEL:  $(uname -r)" \
