@@ -5,7 +5,7 @@ if [ "${DE+x}" = x ] || [ "${WM+x}" = x ]; then
 	ui="${DE:+DE}${DE:+${WM:+/}}${WM:+WM}:      ${DE:+${WM:+$'\33[3D'}}$DE${DE:+${WM:+/}}$WM"
 elif [ "${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION-}}" != '' ]; then
 	ui="DE:      ${XDG_CURRENT_DESKTOP:-}${XDG_CURRENT_DESKTOP:+${DESKTOP_SESSION:+, }}${DESKTOP_SESSION:-}"
-elif [[ -r ~/.xinitrc || -r ~/.xsession ]]; then
+elif [ -r ~/.xinitrc -o -r ~/.xsession ]; then
 	uiexec=
 	for i in $(sed -ne 's/^exec //p' ~/.xinitrc ~/.xsession 2>/dev/null); do
 		case $(pidof -- "$uiexec") in ?*) uiexec=$uiexec${i##*/}; esac
@@ -24,7 +24,7 @@ IFS=$(printf \\33)
 unset w
 c=4 # default color blue (Arch, BTW)
 _os=${os%[Ll][Ii][Nn][Uu][Xx]}
-_os=${_os%" "*}
+_os=${_os%%" "*}
 case $_os in
 
 [Aa]rch)a=\
@@ -53,11 +53,11 @@ c=6;;
 
 [Aa]lpine)a=\
 '
-   /\
-  /  \'$IFS' /\'$IFS'
- /'$IFS'◁'$IFS'   \'$IFS'  
-';
-c='4 8 4 8 4 8 4 4 8';w=12;;
+    .
+   / \
+  /   \'$IFS' /\'$IFS'
+ /'$IFS'◁'$IFS'    \'$IFS'  \';
+c='4 8 4 8 4 8  4';w=12;;
 
 [Aa]ndroid)a=\
 '
@@ -112,7 +112,15 @@ for i in $a; do
 done
 printf '\33[m\n\33[5A'
 
-p=$(printf '\33[3%im%s\33[m@%s \33[3%im%s\33[m'  "$(( ${EUID:-$(id -u)} == 0 ? 1 : 3 ))" "${USER:-$(id -un)}" "${HOSTNAME:-$(hostname)}" "$c" "${PWD:-$(pwd)}") # prompt
+p=$( # prompt
+printf '\33[3%im%s\33[m@%s \33[3%im%s\33[m'  \
+	"$(( ${EUID:-$(id -u)} == 0 ? 1 : 3 ))" \
+	"${USER:-$(id -un)}" \
+	"${HOSTNAME:-$(hostname)}" \
+	"${c#*" "}" \
+	"${PWD:-$(pwd)}"
+)
+
 b=;for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do # detect battery level
 	[ -r "$i"/capacity ] &&
 		b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status);
