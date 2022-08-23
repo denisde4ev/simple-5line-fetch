@@ -11,6 +11,8 @@ elif [ -r ~/.xinitrc -o -r ~/.xsession ]; then
 		case $(pidof -- "$uiexec") in ?*) uiexec=$uiexec${i##*/}; esac
 	done
 	[ "${uiexec% }" != '' ] && ui="WM:      ${uiexec% }"
+else
+	false
 fi || {
 	ui="TTY:     ${ui#/dev/}${SSH_TTY:+, ssh}"
 }

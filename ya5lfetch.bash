@@ -11,6 +11,8 @@ elif [[ -r ~/.xinitrc || -r ~/.xsession ]]; then
 		[[ $(pidof -- "$uiexec") ]] && uiexec+="$(basename -- "$i") "
 	done
 	[[ ${uiexec% } ]] && ui="WM:      ${uiexec% }"
+else
+	false
 fi || {
 	ui="TTY:     ${ui#/dev/}${SSH_TTY:+, ssh}"
 }
