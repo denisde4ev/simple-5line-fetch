@@ -26,19 +26,19 @@ $ ya5lfetch
 ▕       ▏SHELL:   bash
  ▔▔▔▔▔▔▔ TTY:     pts/3, ssh
 
-[KISS, in chroot] $ ya5lfetch   # TODO: fix missing "TTY: not a tty"
+[KISS, in chroot] $ ya5lfetch
         root@kpc /tmp/_9754
  +----+ OS:      KISS Linux
  | |/ | KERNEL:  5.18.15-arch1-1
  | |\ | SHELL:   ya5lfetch.sh
- +----+ not a tty
+ +----+ TTY:     not a tty
 
-[Alpine, in termux chroot] $ ya5lfetch  # TODO: fix missing "TTY: not a tty"
+[Alpine, in termux chroot] $ ya5lfetch
             u99-_-@dumpling /root
     .       OS:      Alpine Linux v3.11
    / \      KERNEL:  4.4.254-lineage+
   /   \ /\  SHELL:   bash
- /◁    \  \ /dev/pts/1
+ /◁    \  \ TTY:     /dev/pts/1
 ```
 
 TODO install and get linux kernel version and distros exact name:
