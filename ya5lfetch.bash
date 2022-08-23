@@ -106,7 +106,7 @@ for i in "${!a[@]}"; do
 done
 printf '\e[m\n\e[5A'
 
-p='\e[3'"$((EUID==0?1:3))"'m\u\e[m@\h \e[3'"${c[-1]}"'m\w\e[m'
+p='\e[3'"$((EUID==0?1:3))"'m\u\e[m@\h \e[3'"${c[${#c[@]}-1]}"'m\w\e[m'
 
 b='' # detect battery level
 for i in /sys/class/power_supply/{battery,{BAT,axp288_fuel_gauge,CMB}*}; do
