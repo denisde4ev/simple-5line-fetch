@@ -11,7 +11,9 @@ elif [ -r ~/.xinitrc -o -r ~/.xsession ]; then
 		case $(pidof -- "$uiexec") in ?*) uiexec=$uiexec${i##*/}; esac
 	done
 	[ "${uiexec% }" != '' ] && ui="WM:      ${uiexec% }"
-fi || ui="TTY:     ${ui#/dev/}${SSH_TTY:+, ssh}"
+fi || {
+	ui="TTY:     ${ui#/dev/}${SSH_TTY:+, ssh}"
+}
 
 # [[ $os ]] || os=$(sed -ne 's/PRETTY_NAME=//p' "$PREFIX/etc/os-release" || echo "$MACHTYPE"); os=${os#[\'\"]}; os=${os%[\'\"]}
 case ${os+x} in '')
@@ -43,20 +45,36 @@ case $_os in
  /`     `\'
 ;;
 
-[Aa]rtix)a=\
+
+artix*)a=\
 "     .    
     / \\   
    /.  \\  
   /   * \\ 
  /   '   \\"
 c=6;;
+artix2)a=\
+"     .    
+    / \\   
+   /'. \\  
+  /   .'\\ 
+ /   '   \\"
+c=6;;
+artix3)a=\
+'
+    /\   
+   /  \  
+  / 🎨 \ 
+ /      \'
+c=6;w=9;;
+
 
 [Aa]lpine)a=\
 '
     .
    / \
   /   \'$IFS' /\'$IFS'
- /'$IFS'◁'$IFS'    \'$IFS'  \';
+ /'$IFS'◁'$IFS'    \'$IFS'  \'
 c='4 8 4 8 4 8  4';w=12;;
 
 [Aa]ndroid)a=\
@@ -98,15 +116,14 @@ c=1;w=9;;
 █▀███████▀█
 █░█▀▀▀▀▀█░█
 ░░░▀▀░▀▀░░░'
-c=$(( ${RANDOM:-$(\dd if=/dev/random | tr -dc 0-9 | head -c 1)} % 7 + 1 ));w=12;;
+c=$(( ${RANDOM:-$(\dd if=/dev/random 2>/dev/null | tr -dc 0-9 | head -c 1)} % 7 + 1 ));w=12;;
 
 esac
 
 
 
 # printf '\33[3'"$c"'m%s\33[m\n\33[5A' "$a"
-set -f
-for i in $a; do
+set -f; for i in $a; do
 	printf "\\33[3${c%%" "*}m%s" "${i}"
 	c=${c#*" "} # note: last val wont be auto removed
 done
@@ -121,10 +138,12 @@ printf '\33[3%im%s\33[m@%s \33[3%im%s\33[m'  \
 	"${PWD:-$(pwd)}"
 )
 
-b=;for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do # detect battery level
-	[ -r "$i"/capacity ] &&
-		b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status);
+b= # detect battery level
+for i in /sys/class/power_supply/{{BAT,axp288_fuel_gauge,CMB}*,battery}; do
+	[ -r "$i"/capacity ] || continue
+	b=$b${b:+, }$(cat "$i"/capacity)"% "$(cat "$i"/status);
 done
+
 printf "\\33[${w:-11}C%s\\n" \
 	"$p" \
 	"OS:      $os" \
